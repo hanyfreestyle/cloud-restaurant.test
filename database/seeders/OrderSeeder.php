@@ -27,6 +27,11 @@ class OrderSeeder extends Seeder
             $tables = Table::where('restaurant_id', $restaurant->id)->get();
             $products = Product::where('restaurant_id', $restaurant->id)->get();
             
+            // Skip if there are no tables or products
+            if ($tables->isEmpty() || $products->isEmpty()) {
+                continue;
+            }
+            
             // Create 5 orders for each restaurant
             for ($i = 0; $i < 5; $i++) {
                 $table = $tables->random();
@@ -52,7 +57,7 @@ class OrderSeeder extends Seeder
                     $productVariant = null;
                     $variants = ProductVariant::where('product_id', $product->id)->get();
                     
-                    if ($variants->count() > 0 && rand(0, 1) === 1) {
+                    if ($variants->isNotEmpty() && rand(0, 1) === 1) {
                         $productVariant = $variants->random();
                         $unitPrice = $productVariant->price_modifier;
                     } else {

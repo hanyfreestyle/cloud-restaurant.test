@@ -19,8 +19,8 @@ class UserSeeder extends Seeder
         $adminUser = User::create([
             'id' => Uuid::uuid4()->toString(),
             'name' => 'Admin User',
-            'email' => 'admin@demo.com',
-            'password' => Hash::make('password'),
+            'email' => 'hany.freestyle4u@gmail.com',
+            'password' => Hash::make('hany.freestyle4u@gmail.com'),
         ]);
         $adminUser->assignRole('admin');
 
