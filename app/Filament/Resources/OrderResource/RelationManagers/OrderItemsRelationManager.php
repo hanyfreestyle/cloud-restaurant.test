@@ -9,6 +9,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\DB;
 
 class OrderItemsRelationManager extends RelationManager
 {
@@ -16,26 +17,50 @@ class OrderItemsRelationManager extends RelationManager
 
     public function form(Form $form): Form
     {
+        // Get products with translations
+        $productsQuery = DB::table('products')
+            ->join('product_translations', 'products.id', '=', 'product_translations.product_id')
+            ->where('product_translations.locale', app()->getLocale())
+            ->whereNull('products.deleted_at')
+            ->select('products.id', 'product_translations.name');
+            
+        $products = $productsQuery->get()->mapWithKeys(function ($item) {
+            return [$item->id => $item->name];
+        })->toArray();
+
         return $form
             ->schema([
                 Forms\Components\Select::make('product_id')
-                    ->relationship('product', 'name')
+                    ->label('Product')
+                    ->options($products)
                     ->required()
                     ->searchable()
                     ->reactive()
                     ->afterStateUpdated(function ($state, callable $set) {
                         $set('product_variant_id', null);
-                        $set('unit_price', \App\Models\Product::find($state)?->price ?? 0);
-                        $set('total_price', function ($get) {
-                            return $get('unit_price') * $get('quantity');
-                        });
+                        
+                        if ($state) {
+                            $product = \App\Models\Product::find($state);
+                            $set('unit_price', $product?->price ?? 0);
+                            $set('total_price', function ($get) {
+                                return $get('unit_price') * $get('quantity');
+                            });
+                        }
                     }),
                 Forms\Components\Select::make('product_variant_id')
-                    ->relationship('productVariant', 'name', function (Builder $query, $get) {
-                        return $query->where('product_id', $get('product_id'));
+                    ->label('Product Variant')
+                    ->options(function (callable $get) {
+                        $productId = $get('product_id');
+                        
+                        if (!$productId) {
+                            return [];
+                        }
+                        
+                        return \App\Models\ProductVariant::where('product_id', $productId)
+                            ->pluck('name', 'id')
+                            ->toArray();
                     })
                     ->searchable()
-                    ->preload()
                     ->reactive()
                     ->afterStateUpdated(function ($state, callable $set) {
                         if ($state) {
@@ -73,7 +98,8 @@ class OrderItemsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('id')
             ->columns([
-                Tables\Columns\TextColumn::make('product.name'),
+                Tables\Columns\TextColumn::make('product.name')
+                    ->getStateUsing(fn ($record) => $record->product->name ?? ''),
                 Tables\Columns\TextColumn::make('productVariant.name')
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('quantity')

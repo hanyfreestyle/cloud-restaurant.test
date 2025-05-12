@@ -12,8 +12,10 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use Illuminate\Support\Facades\DB;
 
-class CategoryResource extends Resource
+class CategoryResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Category::class;
 
@@ -22,6 +24,18 @@ class CategoryResource extends Resource
     protected static ?string $navigationGroup = 'Restaurant Management';
 
     protected static ?int $navigationSort = 2;
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'create',
+            'update',
+            'delete',
+            'restore',
+            'force_delete',
+        ];
+    }
 
     public static function form(Form $form): Form
     {
@@ -69,10 +83,15 @@ class CategoryResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('restaurant.slug')
-                    ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
+                Tables\Columns\TextColumn::make('translation.name')
+                    ->getStateUsing(fn (Category $record): string => $record->name)
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        // Manual join with translations
+                        return $query->whereHas('translations', function (Builder $subQuery) use ($search) {
+                            $subQuery->where('name', 'LIKE', "%{$search}%");
+                        });
+                    }),
                 Tables\Columns\TextColumn::make('slug')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('position')

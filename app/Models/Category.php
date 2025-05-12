@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Astrotomic\Translatable\Translatable;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\App;
 
 class Category extends Model
 {
@@ -55,5 +57,40 @@ class Category extends Model
     public function products()
     {
         return $this->hasMany(Product::class);
+    }
+    
+    /**
+     * Get the translations relationship.
+     */
+    public function translations()
+    {
+        return $this->hasMany(CategoryTranslation::class);
+    }
+    
+    /**
+     * Get the default translation relationship.
+     */
+    public function defaultTranslation()
+    {
+        return $this->hasOne(CategoryTranslation::class)
+            ->where('locale', App::getLocale())
+            ->withDefault(['name' => $this->slug]);
+    }
+    
+    /**
+     * Apply a scope to get categories with their translated names.
+     */
+    public function scopeWithTranslation(Builder $query)
+    {
+        $locale = App::getLocale();
+        
+        return $query->addSelect([
+            'categories.*',
+            'category_translations.name',
+        ])
+        ->join('category_translations', function ($join) use ($locale) {
+            $join->on('categories.id', '=', 'category_translations.category_id')
+                 ->where('category_translations.locale', '=', $locale);
+        });
     }
 }

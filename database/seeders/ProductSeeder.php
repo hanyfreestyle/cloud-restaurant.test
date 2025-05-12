@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductTranslation;
 use App\Models\ProductVariant;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -20,7 +21,19 @@ class ProductSeeder extends Seeder
 
         foreach ($categories as $category) {
             $restaurant = $category->restaurant;
-            $categoryName = $category->getTranslation('name', 'en');
+            
+            // Get category name from translations
+            $categoryName = null;
+            foreach($category->translations as $translation) {
+                if ($translation->locale === 'en') {
+                    $categoryName = $translation->name;
+                    break;
+                }
+            }
+            
+            if (!$categoryName) {
+                continue; // Skip if no English name found
+            }
 
             if ($categoryName === 'Chicken') {
                 $this->createChickenProducts($category, $restaurant);
@@ -37,9 +50,9 @@ class ProductSeeder extends Seeder
         $products = [
             [
                 'name' => 'فراخ بانية',
-                'name:en' => 'Fried Chicken',
+                'name_en' => 'Fried Chicken',
                 'description' => 'فراخ بانية مقرمشة ومقلية تقدم مع البطاطس والصلصة',
-                'description:en' => 'Crispy fried chicken served with fries and sauce',
+                'description_en' => 'Crispy fried chicken served with fries and sauce',
                 'slug' => $restaurant->slug . '-fried-chicken',
                 'price' => 100,
                 'variants' => [
@@ -62,9 +75,9 @@ class ProductSeeder extends Seeder
             ],
             [
                 'name' => 'فراخ مشوية',
-                'name:en' => 'Grilled Chicken',
+                'name_en' => 'Grilled Chicken',
                 'description' => 'فراخ مشوية طازجة تقدم مع الأرز والخضار',
-                'description:en' => 'Fresh grilled chicken served with rice and vegetables',
+                'description_en' => 'Fresh grilled chicken served with rice and vegetables',
                 'slug' => $restaurant->slug . '-grilled-chicken',
                 'price' => 120,
                 'variants' => [
@@ -82,9 +95,9 @@ class ProductSeeder extends Seeder
             ],
             [
                 'name' => 'كرسبي تشيكن',
-                'name:en' => 'Crispy Chicken',
+                'name_en' => 'Crispy Chicken',
                 'description' => 'قطع دجاج مقرمشة مع صوص خاص',
-                'description:en' => 'Crispy chicken pieces with special sauce',
+                'description_en' => 'Crispy chicken pieces with special sauce',
                 'slug' => $restaurant->slug . '-crispy-chicken',
                 'price' => 90,
                 'variants' => [
@@ -110,9 +123,9 @@ class ProductSeeder extends Seeder
         $products = [
             [
                 'name' => 'كولا',
-                'name:en' => 'Cola',
+                'name_en' => 'Cola',
                 'description' => 'مشروب غازي منعش',
-                'description:en' => 'Refreshing fizzy drink',
+                'description_en' => 'Refreshing fizzy drink',
                 'slug' => $restaurant->slug . '-cola',
                 'price' => 15,
                 'variants' => [
@@ -130,9 +143,9 @@ class ProductSeeder extends Seeder
             ],
             [
                 'name' => 'عصير برتقال',
-                'name:en' => 'Orange Juice',
+                'name_en' => 'Orange Juice',
                 'description' => 'عصير برتقال طازج',
-                'description:en' => 'Fresh orange juice',
+                'description_en' => 'Fresh orange juice',
                 'slug' => $restaurant->slug . '-orange-juice',
                 'price' => 30,
                 'variants' => [
@@ -150,9 +163,9 @@ class ProductSeeder extends Seeder
             ],
             [
                 'name' => 'مياه معدنية',
-                'name:en' => 'Mineral Water',
+                'name_en' => 'Mineral Water',
                 'description' => 'مياه معدنية نقية',
-                'description:en' => 'Pure mineral water',
+                'description_en' => 'Pure mineral water',
                 'slug' => $restaurant->slug . '-mineral-water',
                 'price' => 10,
                 'variants' => [
@@ -178,9 +191,9 @@ class ProductSeeder extends Seeder
         $products = [
             [
                 'name' => 'سلطة خضراء',
-                'name:en' => 'Green Salad',
+                'name_en' => 'Green Salad',
                 'description' => 'سلطة خضراء طازجة مع صلصة الليمون',
-                'description:en' => 'Fresh green salad with lemon dressing',
+                'description_en' => 'Fresh green salad with lemon dressing',
                 'slug' => $restaurant->slug . '-green-salad',
                 'price' => 50,
                 'variants' => [
@@ -198,9 +211,9 @@ class ProductSeeder extends Seeder
             ],
             [
                 'name' => 'سلطة سيزر',
-                'name:en' => 'Caesar Salad',
+                'name_en' => 'Caesar Salad',
                 'description' => 'خس روماني، خبز محمص، جبنة بارميزان، وصلصة سيزر',
-                'description:en' => 'Romaine lettuce, croutons, parmesan cheese, and Caesar dressing',
+                'description_en' => 'Romaine lettuce, croutons, parmesan cheese, and Caesar dressing',
                 'slug' => $restaurant->slug . '-caesar-salad',
                 'price' => 65,
                 'variants' => [
@@ -218,9 +231,9 @@ class ProductSeeder extends Seeder
             ],
             [
                 'name' => 'سلطة فواكه',
-                'name:en' => 'Fruit Salad',
+                'name_en' => 'Fruit Salad',
                 'description' => 'تشكيلة من الفواكه الطازجة الموسمية',
-                'description:en' => 'Assortment of fresh seasonal fruits',
+                'description_en' => 'Assortment of fresh seasonal fruits',
                 'slug' => $restaurant->slug . '-fruit-salad',
                 'price' => 55,
                 'variants' => [
@@ -244,25 +257,40 @@ class ProductSeeder extends Seeder
     private function createProductsWithVariants($products, $category, $restaurant)
     {
         foreach ($products as $productData) {
-            $product = Product::create([
-                'id' => Uuid::uuid4()->toString(),
-                'category_id' => $category->id,
-                'restaurant_id' => $restaurant->id,
-                'slug' => $productData['slug'],
-                'price' => $productData['price'],
-                'regular_price' => $productData['price'] * 1.2, // 20% higher as regular price
-                'is_active' => true,
-                'name' => $productData['name'],
-                'name:en' => $productData['name:en'],
-                'description' => $productData['description'],
-                'description:en' => $productData['description:en'],
-            ]);
+            // Create the product
+            $productId = Uuid::uuid4()->toString();
+            
+            $product = new Product();
+            $product->id = $productId;
+            $product->category_id = $category->id;
+            $product->restaurant_id = $restaurant->id;
+            $product->slug = $productData['slug'];
+            $product->price = $productData['price'];
+            $product->regular_price = $productData['price'] * 1.2; // 20% higher as regular price
+            $product->is_active = true;
+            $product->save();
+            
+            // Create Arabic translation
+            $arTranslation = new ProductTranslation();
+            $arTranslation->product_id = $productId;
+            $arTranslation->locale = 'ar';
+            $arTranslation->name = $productData['name'];
+            $arTranslation->description = $productData['description'];
+            $arTranslation->save();
+            
+            // Create English translation
+            $enTranslation = new ProductTranslation();
+            $enTranslation->product_id = $productId;
+            $enTranslation->locale = 'en';
+            $enTranslation->name = $productData['name_en'];
+            $enTranslation->description = $productData['description_en'];
+            $enTranslation->save();
 
             // Create variants for the product
             foreach ($productData['variants'] as $variantData) {
                 ProductVariant::create([
                     'id' => Uuid::uuid4()->toString(),
-                    'product_id' => $product->id,
+                    'product_id' => $productId,
                     'name' => $variantData['name'],
                     'option' => $variantData['option'],
                     'price_modifier' => $variantData['price_modifier'],

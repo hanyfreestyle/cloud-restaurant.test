@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ProductResource\Pages;
 use App\Filament\Resources\ProductResource\RelationManagers;
 use App\Models\Product;
+use App\Models\Category;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,6 +14,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use Illuminate\Support\Facades\DB;
 
 class ProductResource extends Resource implements HasShieldPermissions
 {
@@ -38,6 +40,17 @@ class ProductResource extends Resource implements HasShieldPermissions
 
     public static function form(Form $form): Form
     {
+        // Get categories with translations
+        $categoriesQuery = DB::table('categories')
+            ->join('category_translations', 'categories.id', '=', 'category_translations.category_id')
+            ->where('category_translations.locale', app()->getLocale())
+            ->whereNull('categories.deleted_at')
+            ->select('categories.id', 'category_translations.name');
+        
+        $categories = $categoriesQuery->get()->mapWithKeys(function ($item) {
+            return [$item->id => $item->name];
+        })->toArray();
+
         return $form
             ->schema([
                 Forms\Components\Select::make('restaurant_id')
@@ -49,13 +62,11 @@ class ProductResource extends Resource implements HasShieldPermissions
                         $set('category_id', null);
                     }),
                 Forms\Components\Select::make('category_id')
-                    ->relationship('category', 'name', function (Builder $query, $get) {
-                        return $query->where('restaurant_id', $get('restaurant_id'));
-                    })
+                    ->label('Category')
+                    ->options($categories)
                     ->required()
                     ->searchable()
-                    ->preload()
-                    ->exists('categories', 'id'),
+                    ->reactive(),
                 Forms\Components\Tabs::make('Translations')
                     ->tabs([
                         Forms\Components\Tabs\Tab::make('Arabic')
@@ -114,11 +125,19 @@ class ProductResource extends Resource implements HasShieldPermissions
                     ->disk('public')
                     ->circular(),
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
+                    ->getStateUsing(fn (Product $record): string => $record->name)
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        return $query->whereTranslationLike('name', "%{$search}%");
+                    }),
                 Tables\Columns\TextColumn::make('restaurant.slug')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('category.name')
-                    ->sortable(),
+                    ->getStateUsing(fn (Product $record): string => $record->category->name ?? '')
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        return $query->whereHas('category', function (Builder $query) use ($search) {
+                            $query->whereTranslationLike('name', "%{$search}%");
+                        });
+                    }),
                 Tables\Columns\TextColumn::make('price')
                     ->money('EGP')
                     ->sortable(),
@@ -146,7 +165,16 @@ class ProductResource extends Resource implements HasShieldPermissions
                 Tables\Filters\SelectFilter::make('restaurant')
                     ->relationship('restaurant', 'slug'),
                 Tables\Filters\SelectFilter::make('category')
-                    ->relationship('category', 'name'),
+                    ->options(function() {
+                        return DB::table('categories')
+                            ->join('category_translations', 'categories.id', '=', 'category_translations.category_id')
+                            ->where('category_translations.locale', app()->getLocale())
+                            ->whereNull('categories.deleted_at')
+                            ->select('categories.id', 'category_translations.name')
+                            ->get()
+                            ->pluck('name', 'id')
+                            ->toArray();
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

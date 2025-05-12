@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
+use App\Models\CategoryTranslation;
 use App\Models\Restaurant;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -22,34 +23,49 @@ class CategorySeeder extends Seeder
             $categories = [
                 [
                     'name' => 'فراخ',
-                    'name:en' => 'Chicken',
+                    'name_en' => 'Chicken',
                     'slug' => $restaurant->slug . '-chicken',
                     'position' => 1,
                 ],
                 [
                     'name' => 'مشروبات',
-                    'name:en' => 'Drinks',
+                    'name_en' => 'Drinks',
                     'slug' => $restaurant->slug . '-drinks',
                     'position' => 2,
                 ],
                 [
                     'name' => 'سلطات',
-                    'name:en' => 'Salads',
+                    'name_en' => 'Salads',
                     'slug' => $restaurant->slug . '-salads',
                     'position' => 3,
                 ],
             ];
 
             foreach ($categories as $categoryData) {
-                Category::create([
-                    'id' => Uuid::uuid4()->toString(),
-                    'restaurant_id' => $restaurant->id,
-                    'slug' => $categoryData['slug'],
-                    'position' => $categoryData['position'],
-                    'is_active' => true,
-                    'name' => $categoryData['name'],
-                    'name:en' => $categoryData['name:en'],
-                ]);
+                // Create the category
+                $categoryId = Uuid::uuid4()->toString();
+                
+                $category = new Category();
+                $category->id = $categoryId;
+                $category->restaurant_id = $restaurant->id;
+                $category->slug = $categoryData['slug'];
+                $category->position = $categoryData['position'];
+                $category->is_active = true;
+                $category->save();
+                
+                // Create Arabic translation
+                $arTranslation = new CategoryTranslation();
+                $arTranslation->category_id = $categoryId;
+                $arTranslation->locale = 'ar';
+                $arTranslation->name = $categoryData['name'];
+                $arTranslation->save();
+                
+                // Create English translation
+                $enTranslation = new CategoryTranslation();
+                $enTranslation->category_id = $categoryId;
+                $enTranslation->locale = 'en';
+                $enTranslation->name = $categoryData['name_en'];
+                $enTranslation->save();
             }
         }
     }

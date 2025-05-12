@@ -51,9 +51,21 @@ class OrderSeeder extends Seeder
                 // Add 2-4 items to each order
                 $itemCount = rand(2, 4);
                 $totalAmount = 0;
+                $addedProducts = []; // Prevent duplicates
                 
                 for ($j = 0; $j < $itemCount; $j++) {
-                    $product = $products->random();
+                    // Get a product not already added to this order
+                    $availableProducts = $products->filter(function ($product) use ($addedProducts) {
+                        return !in_array($product->id, $addedProducts);
+                    });
+                    
+                    if ($availableProducts->isEmpty()) {
+                        break; // No more products to add
+                    }
+                    
+                    $product = $availableProducts->random();
+                    $addedProducts[] = $product->id;
+                    
                     $productVariant = null;
                     $variants = ProductVariant::where('product_id', $product->id)->get();
                     
