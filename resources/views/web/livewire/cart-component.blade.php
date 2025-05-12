@@ -1,10 +1,10 @@
 <div>
-    <section class="py-5" wire:loading.class="opacity-50">
+    <section class="py-5">
         <div class="container">
             <h1 class="text-center mb-5">{{ __('Your Cart') }}</h1>
             
             <!-- Loading Indicator -->
-            <div wire:loading wire:target="removeItem, updateQuantity, clearCart" class="d-flex justify-content-center mb-4">
+            <div wire:loading class="d-flex justify-content-center mb-4">
                 <div class="spinner-border text-primary" role="status">
                     <span class="visually-hidden">Loading...</span>
                 </div>

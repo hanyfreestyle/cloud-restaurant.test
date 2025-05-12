@@ -327,7 +327,9 @@
                         <!-- Cart Icon -->
                         <a href="{{ route('cart') }}" class="btn btn-outline-primary position-relative cart-icon">
                             <i class="fas fa-shopping-cart"></i>
-                            @livewire('web.cart-counter')
+                            @if(Cart::count() > 0)
+                                <span class="cart-badge">{{ Cart::count() }}</span>
+                            @endif
                         </a>
                     </div>
                 </div>

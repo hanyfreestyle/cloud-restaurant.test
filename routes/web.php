@@ -25,9 +25,14 @@ Route::group(
 
         // Menu
         Route::get('/menu', [MenuController::class, 'index'])->name('menu');
+        Route::post('/menu/add-to-cart', [MenuController::class, 'addToCart'])->name('menu.addToCart');
+        Route::post('/menu/select-category', [MenuController::class, 'selectCategory'])->name('menu.selectCategory');
 
         // Cart
         Route::get('/cart', [CartController::class, 'index'])->name('cart');
+        Route::post('/cart/update-quantity', [CartController::class, 'updateQuantity'])->name('cart.updateQuantity');
+        Route::post('/cart/remove-item', [CartController::class, 'removeItem'])->name('cart.removeItem');
+        Route::post('/cart/clear', [CartController::class, 'clearCart'])->name('cart.clear');
 
         // Checkout
         Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');

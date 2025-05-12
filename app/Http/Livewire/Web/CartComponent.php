@@ -10,8 +10,7 @@ class CartComponent extends Component
     public function removeItem($rowId)
     {
         Cart::remove($rowId);
-        $this->emit('cartUpdated');
-        $this->dispatchBrowserEvent('cartUpdated');
+        $this->dispatch('cartUpdated');
         session()->flash('message', __('Item removed from cart.'));
     }
     
@@ -20,15 +19,13 @@ class CartComponent extends Component
         $qty = max(1, $qty); // Ensure minimum quantity is 1
         
         Cart::update($rowId, $qty);
-        $this->emit('cartUpdated');
-        $this->dispatchBrowserEvent('cartUpdated');
+        $this->dispatch('cartUpdated');
     }
     
     public function clearCart()
     {
         Cart::destroy();
-        $this->emit('cartUpdated');
-        $this->dispatchBrowserEvent('cartUpdated');
+        $this->dispatch('cartUpdated');
         session()->flash('message', __('Cart has been cleared.'));
     }
     

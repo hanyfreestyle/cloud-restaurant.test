@@ -55,9 +55,6 @@ class MenuComponent extends Component
     {
         $this->activeCategory = $categoryId;
         $this->loadProducts();
-        
-        // Emit browser event for scrolling to products section
-        $this->dispatchBrowserEvent('category-changed');
     }
     
     public function showProductVariants($productId)
@@ -95,9 +92,7 @@ class MenuComponent extends Component
                     ]);
                     
                     session()->flash('message', __('Product added to cart!'));
-                    $this->emit('cartUpdated');
-                    // Enviar un evento al navegador para la animación
-                    $this->dispatchBrowserEvent('cartUpdated');
+                    $this->dispatch('cartUpdated');
                 }
             } else {
                 // Add with variant
@@ -128,9 +123,7 @@ class MenuComponent extends Component
                         ]);
                         
                         session()->flash('message', __('Product added to cart!'));
-                        $this->emit('cartUpdated');
-                        // Enviar un evento al navegador para la animación
-                        $this->dispatchBrowserEvent('cartUpdated');
+                        $this->dispatch('cartUpdated');
                         $this->showVariantModal = false;
                     }
                 }

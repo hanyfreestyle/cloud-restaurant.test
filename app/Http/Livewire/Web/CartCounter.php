@@ -7,7 +7,12 @@ use Cart;
 
 class CartCounter extends Component
 {
-    protected $listeners = ['cartUpdated' => '$refresh'];
+    // En Livewire 3, debemos usar el método para los eventos
+    public function cartUpdated()
+    {
+        // Este método será llamado cuando se emita el evento 'cartUpdated'
+        // No necesita hacer nada ya que Livewire 3 se refrescará automáticamente
+    }
     
     public function render()
     {
