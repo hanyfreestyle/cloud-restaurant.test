@@ -27,9 +27,16 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->darkMode(true)
             ->colors([
                 'primary' => Color::Amber,
+                'danger' => Color::Rose,
+                'info' => Color::Blue,
+                'success' => Color::Emerald,
+                'warning' => Color::Orange,
             ])
+            ->brandName('Cloud Restaurant')
+            ->favicon(asset('images/favicon.png'))
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
@@ -53,6 +60,17 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+            ])
+            ->navigationGroups([
+                'Restaurant Management',
+                'Order Management',
+                'User Management',
+            ])
+            ->databaseNotifications()
+            ->sidebarCollapsibleOnDesktop()
+            ->maxContentWidth('full')
+            ->plugins([
+                \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
             ]);
     }
 }
