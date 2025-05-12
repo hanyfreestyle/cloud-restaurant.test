@@ -17,20 +17,20 @@ use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 Route::group(
     [
         'prefix' => LaravelLocalization::setLocale(),
-        'middleware' => ['localeSessionRedirect', 'localizationRedirect', 'localeViewPath']
+        'middleware' => ['web', \Mcamara\LaravelLocalization\Middleware\LocaleSessionRedirect::class, \Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRoutes::class, \Mcamara\LaravelLocalization\Middleware\LaravelLocalizationViewPath::class]
     ],
     function() {
         // Home page
         Route::get('/', [HomeController::class, 'index'])->name('home');
 
         // Menu
-        Route::get('/menu', MenuComponent::class)->name('menu');
+        Route::get('/menu', [MenuController::class, 'index'])->name('menu');
 
         // Cart
-        Route::get('/cart', CartComponent::class)->name('cart');
+        Route::get('/cart', [CartController::class, 'index'])->name('cart');
 
         // Checkout
-        Route::get('/checkout', CheckoutComponent::class)->name('checkout');
+        Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
 
         // Order confirmation
         Route::get('/order/success', [OrderController::class, 'success'])->name('order.success');

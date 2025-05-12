@@ -46,6 +46,19 @@ class Product extends Model
     public $translatedAttributes = ['name', 'description'];
 
     /**
+     * Get the full URL of the product image.
+     * This is a compatibility method for code that used MediaLibrary
+     *
+     * @param string|null $collection
+     * @param string|null $conversion
+     * @return string|null
+     */
+    public function getFirstMediaUrl($collection = null, $conversion = null)
+    {
+        return $this->image;
+    }
+
+    /**
      * Get the category associated with the product.
      */
     public function category()

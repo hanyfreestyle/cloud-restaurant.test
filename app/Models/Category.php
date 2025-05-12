@@ -45,6 +45,19 @@ class Category extends Model
     public $translatedAttributes = ['name'];
 
     /**
+     * Get the full URL of the category image.
+     * This is a compatibility method for code that used MediaLibrary
+     *
+     * @param string|null $collection
+     * @param string|null $conversion
+     * @return string|null
+     */
+    public function getFirstMediaUrl($collection = null, $conversion = null)
+    {
+        return $this->image;
+    }
+
+    /**
      * Get the restaurant associated with the category.
      */
     public function restaurant()

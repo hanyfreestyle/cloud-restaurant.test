@@ -48,7 +48,7 @@
                             
                             <div class="card-body d-flex flex-column">
                                 <h5 class="card-title">{{ $product->name }}</h5>
-                                <p class="card-text text-muted small">{{ Str::limit($product->description, 80) }}</p>
+                                <p class="card-text text-muted small">{{ \Illuminate\Support\Str::limit($product->description, 80) }}</p>
                                 
                                 <div class="mt-auto">
                                     <div class="d-flex justify-content-between align-items-center">
