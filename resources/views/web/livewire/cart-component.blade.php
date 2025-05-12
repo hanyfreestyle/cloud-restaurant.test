@@ -1,11 +1,24 @@
 <div>
-    <section class="py-5">
+    <section class="py-5" wire:loading.class="opacity-50">
         <div class="container">
             <h1 class="text-center mb-5">{{ __('Your Cart') }}</h1>
             
+            <!-- Loading Indicator -->
+            <div wire:loading wire:target="removeItem, updateQuantity, clearCart" class="d-flex justify-content-center mb-4">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+            
+            <!-- Session Messages -->
             @if(session()->has('message'))
                 <div class="alert alert-success">
                     {{ session('message') }}
+                </div>
+            @endif
+            @if(session()->has('error'))
+                <div class="alert alert-danger">
+                    {{ session('error') }}
                 </div>
             @endif
             
@@ -104,8 +117,8 @@
                     </div>
                 </div>
             @else
-                <div class="text-center py-5">
-                    <i class="fas fa-shopping-cart fa-4x mb-3 text-muted"></i>
+                <div class="empty-cart-container">
+                    <i class="fas fa-shopping-cart empty-cart-icon"></i>
                     <h4>{{ __('Your cart is empty') }}</h4>
                     <p class="text-muted">{{ __('Looks like you haven\'t added anything to your cart yet.') }}</p>
                     <a href="{{ route('menu') }}" class="btn btn-primary mt-3">

@@ -50,9 +50,9 @@
                 @foreach($featuredProducts as $product)
                     <div class="col-md-6 col-lg-3">
                         <div class="card menu-item shadow-sm h-100">
-                            @if($product->getFirstMediaUrl('product-image'))
+                            @if($product->image)
                                 <img 
-                                    src="{{ $product->getFirstMediaUrl('product-image') }}" 
+                                    src="{{ $product->image }}" 
                                     class="card-img-top menu-item-image" 
                                     alt="{{ $product->name }}"
                                 >
@@ -64,7 +64,7 @@
                             
                             <div class="card-body">
                                 <h5 class="card-title">{{ $product->name }}</h5>
-                                <p class="card-text text-muted small">{{ Str::limit($product->description, 60) }}</p>
+                                <p class="card-text text-muted small">{{ \Illuminate\Support\Str::limit($product->description, 60) }}</p>
                             </div>
                             
                             <div class="card-footer bg-white border-0">

@@ -11,6 +11,7 @@ class CartComponent extends Component
     {
         Cart::remove($rowId);
         $this->emit('cartUpdated');
+        $this->dispatchBrowserEvent('cartUpdated');
         session()->flash('message', __('Item removed from cart.'));
     }
     
@@ -20,12 +21,14 @@ class CartComponent extends Component
         
         Cart::update($rowId, $qty);
         $this->emit('cartUpdated');
+        $this->dispatchBrowserEvent('cartUpdated');
     }
     
     public function clearCart()
     {
         Cart::destroy();
         $this->emit('cartUpdated');
+        $this->dispatchBrowserEvent('cartUpdated');
         session()->flash('message', __('Cart has been cleared.'));
     }
     

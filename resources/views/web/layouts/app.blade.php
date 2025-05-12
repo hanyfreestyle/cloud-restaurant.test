@@ -17,6 +17,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+    
     <style>
         :root {
             --primary-color: #e67e22;
@@ -391,6 +393,9 @@
     
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="{{ asset('js/custom.js') }}"></script>
     
     <!-- Livewire Scripts -->
     @livewireScripts

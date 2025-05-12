@@ -55,6 +55,9 @@ class MenuComponent extends Component
     {
         $this->activeCategory = $categoryId;
         $this->loadProducts();
+        
+        // Emit browser event for scrolling to products section
+        $this->dispatchBrowserEvent('category-changed');
     }
     
     public function showProductVariants($productId)
@@ -66,53 +69,76 @@ class MenuComponent extends Component
     
     public function addToCart($productId, $directAdd = false)
     {
-        if ($directAdd) {
-            // Direct add without variants
-            $product = Product::find($productId);
-            
-            if ($product) {
-                Cart::add([
-                    'id' => $product->id,
-                    'name' => $product->name,
-                    'qty' => 1,
-                    'price' => $product->price,
-                    'options' => [
-                        'variant_id' => null,
-                        'variant_name' => null,
-                        'image' => $product->image
-                    ]
-                ]);
+        try {
+            if ($directAdd) {
+                // Direct add without variants
+                $product = Product::find($productId);
                 
-                session()->flash('message', __('Product added to cart!'));
-                $this->emit('cartUpdated');
-            }
-        } else {
-            // Add with variant
-            $product = $this->selectedProduct;
-            $variantId = $this->selectedVariants['variant_id'] ?? null;
-            
-            if ($product && $variantId) {
-                $variant = ProductVariant::find($variantId);
-                
-                if ($variant) {
+                if ($product) {
+                    // Generate a unique ID for the cart item
+                    $uniqueId = $product->id;
+                    
+                    // Make sure to get the image URL properly
+                    $imageUrl = $product->getFirstMediaUrl('products') ?? null;
+                    
                     Cart::add([
-                        'id' => $product->id . '-' . $variant->id, // Create unique ID for cart item
-                        'name' => $product->name . ' - ' . $variant->name,
-                        'qty' => $this->quantity,
-                        'price' => $variant->price_modifier, // Use the full price of the variant
+                        'id' => $uniqueId,
+                        'name' => $product->name,
+                        'qty' => 1,
+                        'price' => (float)$product->price,
                         'options' => [
                             'product_id' => $product->id,
-                            'variant_id' => $variant->id,
-                            'variant_name' => $variant->name,
-                            'image' => $product->image
+                            'variant_id' => null,
+                            'variant_name' => null,
+                            'image' => $imageUrl
                         ]
                     ]);
                     
                     session()->flash('message', __('Product added to cart!'));
                     $this->emit('cartUpdated');
-                    $this->showVariantModal = false;
+                    // Enviar un evento al navegador para la animación
+                    $this->dispatchBrowserEvent('cartUpdated');
+                }
+            } else {
+                // Add with variant
+                $product = $this->selectedProduct;
+                $variantId = $this->selectedVariants['variant_id'] ?? null;
+                
+                if ($product && $variantId) {
+                    $variant = ProductVariant::find($variantId);
+                    
+                    if ($variant) {
+                        // Generate a unique ID for the cart item
+                        $uniqueId = $product->id . '-' . $variant->id;
+                        
+                        // Make sure to get the image URL properly
+                        $imageUrl = $product->getFirstMediaUrl('products') ?? null;
+                        
+                        Cart::add([
+                            'id' => $uniqueId, 
+                            'name' => $product->name . ' - ' . $variant->name,
+                            'qty' => $this->quantity,
+                            'price' => (float)$variant->price_modifier, // Use the full price of the variant
+                            'options' => [
+                                'product_id' => $product->id,
+                                'variant_id' => $variant->id,
+                                'variant_name' => $variant->name,
+                                'image' => $imageUrl
+                            ]
+                        ]);
+                        
+                        session()->flash('message', __('Product added to cart!'));
+                        $this->emit('cartUpdated');
+                        // Enviar un evento al navegador para la animación
+                        $this->dispatchBrowserEvent('cartUpdated');
+                        $this->showVariantModal = false;
+                    }
                 }
             }
+        } catch (\Exception $e) {
+            // Log the error for debugging
+            \Log::error('Error adding to cart: ' . $e->getMessage());
+            session()->flash('error', __('Failed to add product to cart. Please try again.'));
         }
     }
     

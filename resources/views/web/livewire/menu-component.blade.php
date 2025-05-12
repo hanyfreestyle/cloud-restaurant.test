@@ -1,11 +1,24 @@
 <div>
-    <section class="py-5">
-        <div class="container">
+    <section class="py-5" wire:loading.class="opacity-50">
+        <div class="container" id="products-container">
             <h1 class="text-center mb-5">{{ __('Our Menu') }}</h1>
             
+            <!-- Loading Indicator -->
+            <div wire:loading wire:target="setCategory, addToCart" class="d-flex justify-content-center mb-4">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+            
+            <!-- Session Messages -->
             @if(session()->has('message'))
                 <div class="alert alert-success">
                     {{ session('message') }}
+                </div>
+            @endif
+            @if(session()->has('error'))
+                <div class="alert alert-danger">
+                    {{ session('error') }}
                 </div>
             @endif
             
@@ -15,7 +28,7 @@
                     @foreach($categories as $category)
                         <button 
                             wire:click="setCategory('{{ $category->id }}')" 
-                            class="category-btn {{ $activeCategory == $category->id ? 'active' : '' }}"
+                            class="btn btn-outline-primary mx-1 mb-2 {{ $activeCategory == $category->id ? 'active' : '' }}"
                         >
                             {{ $category->name }}
                         </button>
@@ -28,9 +41,9 @@
                 @forelse($products as $product)
                     <div class="col-md-6 col-lg-4">
                         <div class="card menu-item shadow-sm h-100">
-                            @if($product->image)
+                            @if($product->getFirstMediaUrl('products'))
                                 <img 
-                                    src="{{ $product->image }}" 
+                                    src="{{ $product->getFirstMediaUrl('products') }}" 
                                     class="card-img-top menu-item-image" 
                                     alt="{{ $product->name }}"
                                 >
@@ -102,9 +115,9 @@
                 </div>
                 <div class="modal-body">
                     <div class="mb-4">
-                        @if($selectedProduct->image)
+                        @if($selectedProduct->getFirstMediaUrl('products'))
                             <img 
-                                src="{{ $selectedProduct->image }}" 
+                                src="{{ $selectedProduct->getFirstMediaUrl('products') }}" 
                                 class="img-fluid rounded w-100" 
                                 style="max-height: 200px; object-fit: cover;"
                                 alt="{{ $selectedProduct->name }}"
@@ -164,4 +177,17 @@
         </div>
     </div>
     @endif
+    
+    <!-- JavaScript for category navigation and product interactions -->
+    <script>
+        document.addEventListener('livewire:load', function () {
+            window.addEventListener('category-changed', event => {
+                const productsContainer = document.getElementById('products-container');
+                if (productsContainer) {
+                    // Smooth scroll to products
+                    productsContainer.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
 </div>

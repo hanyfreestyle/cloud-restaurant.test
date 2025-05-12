@@ -1,0 +1,177 @@
+/* Custom styles for restaurant menu app */
+
+/* Fix for RTL direction in buttons */
+[dir="rtl"] .ms-2 {
+    margin-right: 0.5rem !important;
+    margin-left: 0 !important;
+}
+
+[dir="rtl"] .me-1 {
+    margin-left: 0.25rem !important;
+    margin-right: 0 !important;
+}
+
+[dir="rtl"] .me-2 {
+    margin-left: 0.5rem !important;
+    margin-right: 0 !important;
+}
+
+[dir="rtl"] .ms-auto {
+    margin-right: auto !important;
+    margin-left: 0 !important;
+}
+
+/* Menu items specific styles */
+.menu-item {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.5s ease forwards;
+}
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.menu-item.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.menu-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.menu-item-image {
+    height: 180px;
+    object-fit: cover;
+}
+
+/* Better quantity controls */
+.quantity-control {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0;
+}
+
+.quantity-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.quantity-btn:hover {
+    background-color: #e9ecef;
+}
+
+.quantity-input {
+    width: 50px;
+    text-align: center;
+    border: none;
+    background: transparent;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+/* Better modal handling */
+.modal {
+    z-index: 1050;
+}
+
+/* Improve cursor for variant selections */
+.cursor-pointer {
+    cursor: pointer;
+}
+
+/* Make category buttons more attractive */
+.btn-outline-primary.active {
+    background-color: #e67e22;
+    border-color: #e67e22;
+    color: white;
+}
+
+/* Cart badge fix for RTL */
+[dir="rtl"] .cart-badge {
+    right: auto;
+    left: -8px;
+}
+
+/* Better alert messages */
+.alert {
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+/* Cart icon animation */
+.cart-icon {
+    transition: transform 0.3s ease;
+}
+
+.cart-updated {
+    animation: cartBounce 0.5s ease;
+}
+
+@keyframes cartBounce {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+}
+
+/* Button click effect */
+.btn.clicked {
+    transform: scale(0.95);
+}
+
+/* List group item selection in variant modal */
+.list-group-item {
+    transition: background-color 0.2s ease;
+    cursor: pointer;
+}
+
+.list-group-item:hover {
+    background-color: rgba(230, 126, 34, 0.1);
+}
+
+.list-group-item.active {
+    background-color: rgba(230, 126, 34, 0.2);
+    border-color: #e67e22;
+}
+
+/* Empty cart styling */
+.empty-cart-container {
+    padding: 40px 0;
+    text-align: center;
+}
+
+.empty-cart-icon {
+    font-size: 5rem;
+    color: #ddd;
+    margin-bottom: 20px;
+}

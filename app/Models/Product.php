@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Astrotomic\Translatable\Translatable;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Product extends Model
+class Product extends Model implements HasMedia
 {
-    use HasFactory, SoftDeletes, Uuids, Translatable;
+    use HasFactory, SoftDeletes, Uuids, Translatable, InteractsWithMedia;
 
     /**
      * The attributes that are mass assignable.
@@ -24,7 +26,6 @@ class Product extends Model
         'price',
         'regular_price',
         'is_active',
-        'image',
     ];
 
     /**
@@ -46,16 +47,12 @@ class Product extends Model
     public $translatedAttributes = ['name', 'description'];
 
     /**
-     * Get the full URL of the product image.
-     * This is a compatibility method for code that used MediaLibrary
-     *
-     * @param string|null $collection
-     * @param string|null $conversion
-     * @return string|null
+     * Register media collections for the product model.
      */
-    public function getFirstMediaUrl($collection = null, $conversion = null)
+    public function registerMediaCollections(): void
     {
-        return $this->image;
+        $this->addMediaCollection('products')
+            ->singleFile();
     }
 
     /**
@@ -88,5 +85,15 @@ class Product extends Model
     public function orderItems()
     {
         return $this->hasMany(OrderItem::class);
+    }
+    
+    /**
+     * Fallback to get image URL for backward compatibility
+     *
+     * @return string|null
+     */
+    public function getImageAttribute()
+    {
+        return $this->getFirstMediaUrl('products') ?: null;
     }
 }
