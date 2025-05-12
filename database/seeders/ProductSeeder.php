@@ -55,6 +55,7 @@ class ProductSeeder extends Seeder
                 'description_en' => 'Crispy fried chicken served with fries and sauce',
                 'slug' => $restaurant->slug . '-fried-chicken',
                 'price' => 100,
+                'image_url' => 'https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80',
                 'variants' => [
                     [
                         'name' => 'صغير',
@@ -80,6 +81,7 @@ class ProductSeeder extends Seeder
                 'description_en' => 'Fresh grilled chicken served with rice and vegetables',
                 'slug' => $restaurant->slug . '-grilled-chicken',
                 'price' => 120,
+                'image_url' => 'https://images.unsplash.com/photo-1598103442097-8b74394b95c6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80',
                 'variants' => [
                     [
                         'name' => 'نصف فرخة',
@@ -100,6 +102,7 @@ class ProductSeeder extends Seeder
                 'description_en' => 'Crispy chicken pieces with special sauce',
                 'slug' => $restaurant->slug . '-crispy-chicken',
                 'price' => 90,
+                'image_url' => 'https://images.unsplash.com/photo-1626082822668-6293047b06e2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80',
                 'variants' => [
                     [
                         'name' => '6 قطع',
@@ -128,6 +131,7 @@ class ProductSeeder extends Seeder
                 'description_en' => 'Refreshing fizzy drink',
                 'slug' => $restaurant->slug . '-cola',
                 'price' => 15,
+                'image_url' => 'https://images.unsplash.com/photo-1554866585-cd94860890b7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=765&q=80',
                 'variants' => [
                     [
                         'name' => 'عبوة صغيرة',
@@ -148,6 +152,7 @@ class ProductSeeder extends Seeder
                 'description_en' => 'Fresh orange juice',
                 'slug' => $restaurant->slug . '-orange-juice',
                 'price' => 30,
+                'image_url' => 'https://images.unsplash.com/photo-1600271886742-f049cd451bba?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80',
                 'variants' => [
                     [
                         'name' => 'كوب صغير',
@@ -168,6 +173,7 @@ class ProductSeeder extends Seeder
                 'description_en' => 'Pure mineral water',
                 'slug' => $restaurant->slug . '-mineral-water',
                 'price' => 10,
+                'image_url' => 'https://images.unsplash.com/photo-1564419320461-6870880221ad?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=689&q=80',
                 'variants' => [
                     [
                         'name' => 'عبوة صغيرة',
@@ -196,6 +202,7 @@ class ProductSeeder extends Seeder
                 'description_en' => 'Fresh green salad with lemon dressing',
                 'slug' => $restaurant->slug . '-green-salad',
                 'price' => 50,
+                'image_url' => 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80',
                 'variants' => [
                     [
                         'name' => 'طبق صغير',
@@ -216,6 +223,7 @@ class ProductSeeder extends Seeder
                 'description_en' => 'Romaine lettuce, croutons, parmesan cheese, and Caesar dressing',
                 'slug' => $restaurant->slug . '-caesar-salad',
                 'price' => 65,
+                'image_url' => 'https://images.unsplash.com/photo-1550304943-4f24f54ddde9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80',
                 'variants' => [
                     [
                         'name' => 'بدون دجاج',
@@ -236,6 +244,7 @@ class ProductSeeder extends Seeder
                 'description_en' => 'Assortment of fresh seasonal fruits',
                 'slug' => $restaurant->slug . '-fruit-salad',
                 'price' => 55,
+                'image_url' => 'https://images.unsplash.com/photo-1564093497595-593b96d80180?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=735&q=80',
                 'variants' => [
                     [
                         'name' => 'طبق عادي',
@@ -269,6 +278,24 @@ class ProductSeeder extends Seeder
             $product->regular_price = $productData['price'] * 1.2; // 20% higher as regular price
             $product->is_active = true;
             $product->save();
+            
+            // Add image to product
+            if (isset($productData['image_url'])) {
+                try {
+                    // Download image from URL to temporary file
+                    $tempImage = tempnam(sys_get_temp_dir(), 'product_img');
+                    file_put_contents($tempImage, file_get_contents($productData['image_url']));
+                    
+                    // Add to media library
+                    $product->addMedia($tempImage)
+                        ->usingName($productData['name_en'])
+                        ->usingFileName(basename($productData['image_url']))
+                        ->toMediaCollection('product-image');
+                } catch (\Exception $e) {
+                    // Log error but continue with seeding
+                    echo "Error adding image for {$productData['name_en']}: {$e->getMessage()}\n";
+                }
+            }
             
             // Create Arabic translation
             $arTranslation = new ProductTranslation();
