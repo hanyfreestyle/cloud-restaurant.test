@@ -6,14 +6,18 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "astrotomic/laravel-translatable": "^11.16",
         "filament/filament": "^3.3",
         "hanyfreestyle/laravelshoppingcart": "^1.0",
         "laravel/framework": "^11.0",
         "laravel/tinker": "^2.9",
+        "mcamara/laravel-localization": "^2.3",
+        "ramsey/uuid": "^4.7",
         "spatie/laravel-medialibrary": "^11.12",
         "spatie/laravel-permission": "^6.17"
     },
     "require-dev": {
+        "barryvdh/laravel-debugbar": "^3.15",
         "fakerphp/faker": "^1.23",
         "laravel/pint": "^1.13",
         "laravel/sail": "^1.26",
