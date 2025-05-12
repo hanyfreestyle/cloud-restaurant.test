@@ -72,6 +72,10 @@ class CategoryResource extends Resource implements HasShieldPermissions
                     ->required()
                     ->numeric()
                     ->default(0),
+                Forms\Components\FileUpload::make('image')
+                    ->image()
+                    ->directory('categories')
+                    ->columnSpan(2),
                 Forms\Components\Toggle::make('is_active')
                     ->required()
                     ->default(true),
@@ -82,6 +86,9 @@ class CategoryResource extends Resource implements HasShieldPermissions
     {
         return $table
             ->columns([
+                Tables\Columns\ImageColumn::make('image')
+                    ->defaultImageUrl(fn ($record): string => $record->image ?? '')
+                    ->circular(),
                 Tables\Columns\TextColumn::make('restaurant.slug')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('translation.name')

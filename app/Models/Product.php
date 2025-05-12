@@ -7,12 +7,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Astrotomic\Translatable\Translatable;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Product extends Model implements HasMedia
+class Product extends Model
 {
-    use HasFactory, SoftDeletes, Uuids, Translatable, InteractsWithMedia;
+    use HasFactory, SoftDeletes, Uuids, Translatable;
 
     /**
      * The attributes that are mass assignable.
@@ -46,17 +44,6 @@ class Product extends Model implements HasMedia
      * @var array
      */
     public $translatedAttributes = ['name', 'description'];
-
-    /**
-     * Register the media collections.
-     */
-    public function registerMediaCollections(): void
-    {
-        $this->addMediaCollection('product-image')
-             ->singleFile();
-             
-        $this->addMediaCollection('product-gallery');
-    }
 
     /**
      * Get the category associated with the product.

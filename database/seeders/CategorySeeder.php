@@ -26,18 +26,21 @@ class CategorySeeder extends Seeder
                     'name_en' => 'Chicken',
                     'slug' => $restaurant->slug . '-chicken',
                     'position' => 1,
+                    'image' => 'https://images.pexels.com/photos/616354/pexels-photo-616354.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
                 ],
                 [
                     'name' => 'مشروبات',
                     'name_en' => 'Drinks',
                     'slug' => $restaurant->slug . '-drinks',
                     'position' => 2,
+                    'image' => 'https://images.pexels.com/photos/544961/pexels-photo-544961.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
                 ],
                 [
                     'name' => 'سلطات',
                     'name_en' => 'Salads',
                     'slug' => $restaurant->slug . '-salads',
                     'position' => 3,
+                    'image' => 'https://images.pexels.com/photos/257816/pexels-photo-257816.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
                 ],
             ];
 
@@ -50,6 +53,7 @@ class CategorySeeder extends Seeder
                 $category->restaurant_id = $restaurant->id;
                 $category->slug = $categoryData['slug'];
                 $category->position = $categoryData['position'];
+                $category->image = $categoryData['image'];
                 $category->is_active = true;
                 $category->save();
                 

@@ -23,6 +23,7 @@ class Category extends Model
         'restaurant_id',
         'slug',
         'position',
+        'image',
         'is_active',
     ];
 

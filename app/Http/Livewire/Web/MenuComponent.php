@@ -79,7 +79,7 @@ class MenuComponent extends Component
                     'options' => [
                         'variant_id' => null,
                         'variant_name' => null,
-                        'image' => $product->getFirstMediaUrl('product-image')
+                        'image' => $product->image
                     ]
                 ]);
                 
@@ -104,7 +104,7 @@ class MenuComponent extends Component
                             'product_id' => $product->id,
                             'variant_id' => $variant->id,
                             'variant_name' => $variant->name,
-                            'image' => $product->getFirstMediaUrl('product-image')
+                            'image' => $product->image
                         ]
                     ]);
                     

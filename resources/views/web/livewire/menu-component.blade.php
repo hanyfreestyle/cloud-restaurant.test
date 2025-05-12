@@ -28,9 +28,9 @@
                 @forelse($products as $product)
                     <div class="col-md-6 col-lg-4">
                         <div class="card menu-item shadow-sm h-100">
-                            @if($product->getFirstMediaUrl('product-image'))
+                            @if($product->image)
                                 <img 
-                                    src="{{ $product->getFirstMediaUrl('product-image') }}" 
+                                    src="{{ $product->image }}" 
                                     class="card-img-top menu-item-image" 
                                     alt="{{ $product->name }}"
                                 >
@@ -102,9 +102,9 @@
                 </div>
                 <div class="modal-body">
                     <div class="mb-4">
-                        @if($selectedProduct->getFirstMediaUrl('product-image'))
+                        @if($selectedProduct->image)
                             <img 
-                                src="{{ $selectedProduct->getFirstMediaUrl('product-image') }}" 
+                                src="{{ $selectedProduct->image }}" 
                                 class="img-fluid rounded w-100" 
                                 style="max-height: 200px; object-fit: cover;"
                                 alt="{{ $selectedProduct->name }}"
