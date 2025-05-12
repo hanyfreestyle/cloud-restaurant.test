@@ -26,6 +26,7 @@ class Product extends Model implements HasMedia
         'price',
         'regular_price',
         'is_active',
+        'image',
     ];
 
     /**

@@ -12,8 +12,9 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 
-class ProductResource extends Resource
+class ProductResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Product::class;
 
@@ -22,6 +23,18 @@ class ProductResource extends Resource
     protected static ?string $navigationGroup = 'Restaurant Management';
 
     protected static ?int $navigationSort = 3;
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'create',
+            'update',
+            'delete',
+            'restore',
+            'force_delete',
+        ];
+    }
 
     public static function form(Form $form): Form
     {
@@ -82,11 +95,10 @@ class ProductResource extends Resource
                 Forms\Components\TextInput::make('regular_price')
                     ->numeric()
                     ->prefix('EGP'),
-                Forms\Components\SpatieMediaLibraryFileUpload::make('product-image')
-                    ->collection('product-image')
+                Forms\Components\FileUpload::make('image')
                     ->image()
                     ->imageEditor()
-                    ->downloadable()
+                    ->directory('products')
                     ->columnSpan(2),
                 Forms\Components\Toggle::make('is_active')
                     ->required()
@@ -98,9 +110,9 @@ class ProductResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\SpatieMediaLibraryImageColumn::make('product-image')
-                    ->collection('product-image')
-                    ->rounded(),
+                Tables\Columns\ImageColumn::make('image')
+                    ->disk('public')
+                    ->circular(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('restaurant.slug')

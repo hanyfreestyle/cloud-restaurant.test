@@ -17,94 +17,129 @@ class RoleAndPermissionSeeder extends Seeder
         // Reset cached roles and permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // Create permissions
+        // Create Standard Permissions
         $permissions = [
             // Restaurant permissions
-            'view_restaurants',
-            'create_restaurants',
-            'edit_restaurants',
-            'delete_restaurants',
+            'view_restaurant',
+            'create_restaurant',
+            'update_restaurant',
+            'delete_restaurant',
+            'restore_restaurant',
+            'force_delete_restaurant',
             
             // Category permissions
-            'view_categories',
-            'create_categories',
-            'edit_categories',
-            'delete_categories',
+            'view_category',
+            'create_category',
+            'update_category',
+            'delete_category',
+            'restore_category',
+            'force_delete_category',
             
             // Product permissions
-            'view_products',
-            'create_products',
-            'edit_products',
-            'delete_products',
+            'view_product',
+            'create_product',
+            'update_product',
+            'delete_product',
+            'restore_product',
+            'force_delete_product',
             
             // Table permissions
-            'view_tables',
-            'create_tables',
-            'edit_tables',
-            'delete_tables',
+            'view_table',
+            'create_table',
+            'update_table',
+            'delete_table',
+            'restore_table',
+            'force_delete_table',
             
             // Order permissions
-            'view_orders',
-            'create_orders',
-            'edit_orders',
-            'delete_orders',
+            'view_order',
+            'create_order',
+            'update_order',
+            'delete_order',
+            'restore_order',
+            'force_delete_order',
             'change_order_status',
             'change_payment_status',
             
             // User permissions
-            'view_users',
-            'create_users',
-            'edit_users',
-            'delete_users',
-            'manage_roles',
+            'view_user',
+            'create_user',
+            'update_user',
+            'delete_user',
+            'restore_user',
+            'force_delete_user',
         ];
 
-        foreach ($permissions as $permission) {
+        // Create Shield Permissions (For Filament Shield)
+        $shieldPermissions = [
+            'view_role',
+            'create_role',
+            'update_role',
+            'delete_role',
+            'restore_role',
+            'force_delete_role',
+            'view_permission',
+            'create_permission',
+            'update_permission',
+            'delete_permission',
+            'restore_permission',
+            'force_delete_permission',
+            'shield::view_user_management',
+            'shield::view_role_management',
+        ];
+
+        // Merge all permissions
+        $allPermissions = array_merge($permissions, $shieldPermissions);
+
+        // Create all defined permissions
+        foreach ($allPermissions as $permission) {
             Permission::create(['name' => $permission]);
         }
 
         // Create roles and assign permissions
-        // Admin role
-        $adminRole = Role::create(['name' => 'admin']);
-        $adminRole->givePermissionTo(Permission::all());
+        
+        // 1. Super Admin role
+        $superAdminRole = Role::create(['name' => 'super_admin']);
+        $superAdminRole->givePermissionTo(Permission::all());
 
-        // Manager role
+        // 2. Admin role
+        $adminRole = Role::create(['name' => 'admin']);
+        $adminRole->givePermissionTo([
+            'view_restaurant', 'create_restaurant', 'update_restaurant',
+            'view_category', 'create_category', 'update_category', 'delete_category',
+            'view_product', 'create_product', 'update_product', 'delete_product',
+            'view_table', 'create_table', 'update_table', 'delete_table',
+            'view_order', 'create_order', 'update_order', 'delete_order',
+            'change_order_status', 'change_payment_status',
+            'view_user', 'create_user', 'update_user',
+        ]);
+
+        // 3. Manager role
         $managerRole = Role::create(['name' => 'manager']);
         $managerRole->givePermissionTo([
-            'view_restaurants',
-            'view_categories',
-            'create_categories',
-            'edit_categories',
-            'view_products',
-            'create_products',
-            'edit_products',
-            'view_tables',
-            'create_tables',
-            'edit_tables',
-            'view_orders',
-            'edit_orders',
-            'change_order_status',
-            'change_payment_status',
-            'view_users',
+            'view_restaurant',
+            'view_category', 'create_category', 'update_category',
+            'view_product', 'create_product', 'update_product',
+            'view_table', 'create_table', 'update_table',
+            'view_order', 'update_order',
+            'change_order_status', 'change_payment_status',
+            'view_user',
         ]);
 
-        // Waiter role
+        // 4. Waiter role
         $waiterRole = Role::create(['name' => 'waiter']);
         $waiterRole->givePermissionTo([
-            'view_categories',
-            'view_products',
-            'view_tables',
-            'view_orders',
-            'create_orders',
-            'edit_orders',
+            'view_category',
+            'view_product',
+            'view_table',
+            'view_order', 'create_order', 'update_order',
             'change_order_status',
         ]);
 
-        // Cashier role
+        // 5. Cashier role
         $cashierRole = Role::create(['name' => 'cashier']);
         $cashierRole->givePermissionTo([
-            'view_orders',
-            'edit_orders',
+            'view_order', 'update_order',
             'change_payment_status',
         ]);
     }

@@ -16,13 +16,15 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Filament\SpatieLaravelMediaLibrary\SpatieLaravelMediaLibraryPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        return $panel
+        $panel = $panel
             ->default()
             ->id('admin')
             ->path('admin')
@@ -66,11 +68,31 @@ class AdminPanelProvider extends PanelProvider
                 'Order Management',
                 'User Management',
             ])
-            ->databaseNotifications()
             ->sidebarCollapsibleOnDesktop()
-            ->maxContentWidth('full')
-            ->plugins([
-                \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
-            ]);
+            ->maxContentWidth('full');
+
+        // Only enable database notifications if the notifications table exists
+        if (Schema::hasTable('notifications')) {
+            $panel->databaseNotifications();
+        }
+
+        // Add plugins
+        $plugins = [];
+
+        // Add Spatie Media Library Plugin if it exists
+        if (class_exists(\Filament\SpatieLaravelMediaLibrary\SpatieLaravelMediaLibraryPlugin::class)) {
+            $plugins[] = \Filament\SpatieLaravelMediaLibrary\SpatieLaravelMediaLibraryPlugin::make();
+        }
+
+        // Add Filament Shield Plugin if it exists
+        if (class_exists(\BezhanSalleh\FilamentShield\FilamentShieldPlugin::class)) {
+            $plugins[] = \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make();
+        }
+
+        if (!empty($plugins)) {
+            $panel->plugins($plugins);
+        }
+
+        return $panel;
     }
 }

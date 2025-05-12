@@ -11,8 +11,9 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 
-class RestaurantResource extends Resource
+class RestaurantResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Restaurant::class;
 
@@ -21,6 +22,18 @@ class RestaurantResource extends Resource
     protected static ?string $navigationGroup = 'Restaurant Management';
 
     protected static ?int $navigationSort = 1;
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'create',
+            'update',
+            'delete',
+            'restore',
+            'force_delete',
+        ];
+    }
 
     public static function form(Form $form): Form
     {

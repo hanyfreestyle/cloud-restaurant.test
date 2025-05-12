@@ -15,12 +15,21 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+        // Create Super Admin User
+        $superAdminUser = User::create([
+            'id' => Uuid::uuid4()->toString(),
+            'name' => 'Super Admin',
+            'email' => 'super@demo.com',
+            'password' => Hash::make('password'),
+        ]);
+        $superAdminUser->assignRole('super_admin');
+
         // Create Admin User
         $adminUser = User::create([
             'id' => Uuid::uuid4()->toString(),
             'name' => 'Admin User',
-            'email' => 'hany.freestyle4u@gmail.com',
-            'password' => Hash::make('hany.freestyle4u@gmail.com'),
+            'email' => 'admin@demo.com',
+            'password' => Hash::make('password'),
         ]);
         $adminUser->assignRole('admin');
 
