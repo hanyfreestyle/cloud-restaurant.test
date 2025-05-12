@@ -10,6 +10,7 @@ use App\Http\Controllers\Web\PageController;
 use App\Http\Livewire\Web\CartComponent;
 use App\Http\Livewire\Web\MenuComponent;
 use App\Http\Livewire\Web\CheckoutComponent;
+use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
 
 // This group applies the localization middleware
