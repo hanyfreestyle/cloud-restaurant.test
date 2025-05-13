@@ -44,23 +44,12 @@
                     @forelse($category->products as $product)
                         <div class="col-md-6 col-lg-4">
                             <div class="card menu-item shadow-sm h-100">
-                                @if($product->getFirstMediaUrl('products'))
-                                    <img 
-                                        src="{{ $product->getFirstMediaUrl('products') }}" 
-                                        class="card-img-top menu-item-image" 
-                                        alt="{{ $product->name }}"
-                                    >
-                                @elseif($product->image)
-                                    <img 
-                                        src="{{ asset('storage/' . $product->image) }}" 
-                                        class="card-img-top menu-item-image" 
-                                        alt="{{ $product->name }}"
-                                    >
-                                @else
-                                    <div class="bg-light menu-item-image d-flex align-items-center justify-content-center">
-                                        <i class="fas fa-utensils fa-3x text-muted"></i>
-                                    </div>
-                                @endif
+                                <!-- Ejemplo de imagen desde pexels -->
+                                <img 
+                                    src="https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=600"
+                                    class="card-img-top menu-item-image" 
+                                    alt="{{ $product->name }}"
+                                >
                                 
                                 @if($product->regular_price > $product->price)
                                     <div class="menu-item-badge">
@@ -125,21 +114,13 @@
                                             
                                             <div class="modal-body">
                                                 <div class="mb-4">
-                                                    @if($product->getFirstMediaUrl('products'))
-                                                        <img 
-                                                            src="{{ $product->getFirstMediaUrl('products') }}" 
-                                                            class="img-fluid rounded w-100" 
-                                                            style="max-height: 200px; object-fit: cover;"
-                                                            alt="{{ $product->name }}"
-                                                        >
-                                                    @elseif($product->image)
-                                                        <img 
-                                                            src="{{ asset('storage/' . $product->image) }}" 
-                                                            class="img-fluid rounded w-100" 
-                                                            style="max-height: 200px; object-fit: cover;"
-                                                            alt="{{ $product->name }}"
-                                                        >
-                                                    @endif
+                                                    <!-- Ejemplo de imagen desde pexels -->
+                                                    <img 
+                                                        src="https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=600"
+                                                        class="img-fluid rounded w-100" 
+                                                        style="max-height: 200px; object-fit: cover;"
+                                                        alt="{{ $product->name }}"
+                                                    >
                                                 </div>
                                                 
                                                 <p class="text-muted mb-4">{{ $product->description }}</p>

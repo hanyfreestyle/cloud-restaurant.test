@@ -64,7 +64,15 @@ class MenuController extends Controller
                     $uniqueId = $product->id;
                     
                     // Make sure to get the image URL properly
-                    $imageUrl = $product->getFirstMediaUrl('products') ?: $product->image;
+                    $imageUrl = null;
+                    
+                    if (filter_var($product->image, FILTER_VALIDATE_URL)) {
+                        $imageUrl = $product->image;
+                    } elseif ($product->getFirstMediaUrl('products')) {
+                        $imageUrl = $product->getFirstMediaUrl('products');
+                    } elseif ($product->image) {
+                        $imageUrl = asset('storage/' . $product->image);
+                    }
                     
                     Cart::add([
                         'id' => $uniqueId,
@@ -94,7 +102,15 @@ class MenuController extends Controller
                         $uniqueId = $product->id . '-' . $variant->id;
                         
                         // Make sure to get the image URL properly
-                        $imageUrl = $product->getFirstMediaUrl('products') ?: $product->image;
+                        $imageUrl = null;
+                        
+                        if (filter_var($product->image, FILTER_VALIDATE_URL)) {
+                            $imageUrl = $product->image;
+                        } elseif ($product->getFirstMediaUrl('products')) {
+                            $imageUrl = $product->getFirstMediaUrl('products');
+                        } elseif ($product->image) {
+                            $imageUrl = asset('storage/' . $product->image);
+                        }
                         
                         Cart::add([
                             'id' => $uniqueId, 
