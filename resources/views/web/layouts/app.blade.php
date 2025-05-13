@@ -325,13 +325,82 @@
                             </ul>
                         </div>
                         
-                        <!-- Cart Icon -->
-                        <a href="{{ route('cart') }}" class="btn btn-outline-primary position-relative cart-icon">
-                            <i class="fas fa-shopping-cart"></i>
-                            @if(Cart::count() > 0)
-                                <span class="cart-badge">{{ Cart::count() }}</span>
-                            @endif
-                        </a>
+                        <!-- Cart Icon with Dropdown -->
+                        <div class="dropdown">
+                            <a href="#" class="btn btn-outline-primary position-relative cart-icon dropdown-toggle" id="cartDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-shopping-cart"></i>
+                                @if(Cart::count() > 0)
+                                    <span class="cart-badge">{{ Cart::count() }}</span>
+                                @endif
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end shadow-sm p-3" style="width: 320px; max-height: 400px; overflow-y: auto;" aria-labelledby="cartDropdown">
+                                <h6 class="dropdown-header">{{ __('Quick Cart') }}</h6>
+                                
+                                @if(Cart::count() > 0)
+                                    <div class="dropdown-item-text">
+                                        <small class="text-muted">{{ Cart::count() }} {{ Cart::count() == 1 ? __('Item') : __('Items') }}</small>
+                                    </div>
+                                    
+                                    <div class="dropdown-divider"></div>
+                                    
+                                    <div class="quick-cart-items mb-3">
+                                        @foreach(Cart::content()->take(4) as $item)
+                                            <div class="d-flex py-2 border-bottom">
+                                                <div class="me-2">
+                                                    @if(isset($item->options['image']) && $item->options['image'])
+                                                        <img src="{{ $item->options['image'] }}" alt="{{ $item->name }}" style="width: 50px; height: 50px; object-fit: cover;" class="rounded">
+                                                    @else
+                                                        <div class="bg-light rounded d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                                            <i class="fas fa-utensils text-muted"></i>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <div class="fw-bold small">{{ \Illuminate\Support\Str::limit($item->name, 20) }}</div>
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <div class="small">{{ $item->qty }} x {{ number_format($item->price, 2) }} EGP</div>
+                                                        <div class="text-primary">{{ number_format($item->subtotal, 2) }} EGP</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                        
+                                        @if(Cart::count() > 4)
+                                            <div class="small text-center mt-2">
+                                                <a href="{{ route('cart') }}" class="text-primary">{{ __('View all items') }}</a>
+                                            </div>
+                                        @endif
+                                    </div>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center py-2">
+                                        <span class="fw-bold">{{ __('Total') }}:</span>
+                                        <span class="fw-bold text-primary">{{ Cart::total() }} EGP</span>
+                                    </div>
+                                    
+                                    <div class="dropdown-divider"></div>
+                                    
+                                    <div class="d-flex justify-content-between">
+                                        <form action="{{ route('cart.clear') }}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                <i class="fas fa-trash-alt me-1"></i> {{ __('Clear Cart') }}
+                                            </button>
+                                        </form>
+                                        <a href="{{ route('cart') }}" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-shopping-cart me-1"></i> {{ __('View Cart') }}
+                                        </a>
+                                    </div>
+                                @else
+                                    <div class="text-center py-3">
+                                        <i class="fas fa-shopping-basket fa-3x text-muted mb-3"></i>
+                                        <p class="mb-0">{{ __('Your cart is empty') }}</p>
+                                        <a href="{{ route('menu') }}" class="btn btn-sm btn-primary mt-3">
+                                            <i class="fas fa-utensils me-2"></i> {{ __('Browse Menu') }}
+                                        </a>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

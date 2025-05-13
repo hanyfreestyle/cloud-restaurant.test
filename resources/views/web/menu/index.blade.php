@@ -43,12 +43,18 @@
                 <div class="col-md-6 col-lg-4">
                     <div class="card menu-item shadow-sm h-100">
                         @if($product->getFirstMediaUrl('products'))
-                            <img 
-                                src="{{ $product->getFirstMediaUrl('products') }}" 
-                                class="card-img-top menu-item-image" 
-                                alt="{{ $product->name }}"
-                            >
-                        @else
+                        <img 
+                        src="{{ $product->getFirstMediaUrl('products') }}" 
+                        class="card-img-top menu-item-image" 
+                        alt="{{ $product->name }}"
+                        >
+                        @elseif($product->image)
+                                <img 
+                                    src="{{ $product->image }}" 
+                                    class="card-img-top menu-item-image" 
+                                    alt="{{ $product->name }}"
+                                >
+                            @else
                             <div class="bg-light menu-item-image d-flex align-items-center justify-content-center">
                                 <i class="fas fa-utensils fa-3x text-muted"></i>
                             </div>
@@ -121,6 +127,13 @@
                                         @if($product->getFirstMediaUrl('products'))
                                             <img 
                                                 src="{{ $product->getFirstMediaUrl('products') }}" 
+                                                class="img-fluid rounded w-100" 
+                                                style="max-height: 200px; object-fit: cover;"
+                                                alt="{{ $product->name }}"
+                                            >
+                                        @elseif($product->image)
+                                            <img 
+                                                src="{{ $product->image }}" 
                                                 class="img-fluid rounded w-100" 
                                                 style="max-height: 200px; object-fit: cover;"
                                                 alt="{{ $product->name }}"

@@ -63,7 +63,7 @@ class MenuController extends Controller
                     $uniqueId = $product->id;
                     
                     // Make sure to get the image URL properly
-                    $imageUrl = $product->getFirstMediaUrl('products') ?? null;
+                    $imageUrl = $product->getFirstMediaUrl('products') ?: $product->image;
                     
                     Cart::add([
                         'id' => $uniqueId,
@@ -93,7 +93,7 @@ class MenuController extends Controller
                         $uniqueId = $product->id . '-' . $variant->id;
                         
                         // Make sure to get the image URL properly
-                        $imageUrl = $product->getFirstMediaUrl('products') ?? null;
+                        $imageUrl = $product->getFirstMediaUrl('products') ?: $product->image;
                         
                         Cart::add([
                             'id' => $uniqueId, 
