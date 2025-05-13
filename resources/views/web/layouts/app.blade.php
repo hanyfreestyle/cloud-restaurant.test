@@ -18,6 +18,7 @@
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/modal.css') }}">
     
     <style>
         :root {
@@ -393,11 +394,36 @@
         </div>
     </footer>
     
-    <!-- Bootstrap Bundle with Popper -->
+<!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
     <!-- Custom JS -->
     <script src="{{ asset('js/custom.js') }}"></script>
+    
+    <script>
+        // Fix modals z-index and backdrop issues
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ensure modals work correctly
+            var modals = document.querySelectorAll('.modal');
+            
+            modals.forEach(function(modal) {
+                modal.addEventListener('shown.bs.modal', function() {
+                    document.body.classList.add('modal-open');
+                    
+                    // Make sure modal is at the top level for z-index
+                    if (modal.parentNode !== document.body) {
+                        document.body.appendChild(modal);
+                    }
+                });
+                
+                modal.addEventListener('hidden.bs.modal', function() {
+                    setTimeout(function() {
+                        document.body.classList.remove('modal-open');
+                    }, 100);
+                });
+            });
+        });
+    </script>
     
     <!-- Livewire Scripts -->
     @livewireScripts

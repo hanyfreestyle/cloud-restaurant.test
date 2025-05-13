@@ -105,7 +105,7 @@
                 
                 <!-- Product Modal for variants -->
                 @if($product->productVariants->count() > 0)
-                <div class="modal fade" id="productModal{{ $product->id }}" tabindex="-1" aria-hidden="true">
+                <div class="modal fade" id="productModal{{ $product->id }}" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -139,12 +139,12 @@
                                                         type="radio" 
                                                         name="variant_id" 
                                                         value="{{ $variant->id }}"
-                                                        class="form-check-input flex-shrink-0" 
+                                                        class="form-check-input flex-shrink-0 variant-selector" 
                                                         required
                                                     >
-                                                    <span>
+                                                    <span class="w-100 d-flex justify-content-between align-items-center">
                                                         <span class="fw-bold">{{ $variant->name }}</span>
-                                                        <small class="d-block text-muted">{{ number_format($variant->price_modifier, 2) }} EGP</small>
+                                                        <span class="badge bg-primary rounded-pill">{{ number_format($variant->price_modifier, 2) }} EGP</span>
                                                     </span>
                                                 </label>
                                             @endforeach
@@ -226,16 +226,44 @@
         });
         
         // Enhance variants selection visibility
-        document.querySelectorAll('input[name="variant_id"]').forEach(input => {
+        document.querySelectorAll('.variant-selector').forEach(input => {
+            // Add click handler to the entire list item, not just the radio button
+            const listItem = input.closest('.list-group-item');
+            
+            listItem.addEventListener('click', function(e) {
+                // If click is on the label or span and not on the radio button itself,
+                // manually trigger the radio button
+                if (e.target !== input) {
+                    input.checked = true;
+                    // Trigger change event
+                    const event = new Event('change', { bubbles: true });
+                    input.dispatchEvent(event);
+                }
+            });
+            
             input.addEventListener('change', function() {
-                // Remove active class from all variant containers
-                document.querySelectorAll('.list-group-item').forEach(item => {
+                // Remove active class from all variant containers in this modal
+                const modal = this.closest('.modal');
+                modal.querySelectorAll('.list-group-item').forEach(item => {
                     item.classList.remove('active', 'bg-light');
                 });
                 
                 // Add active class to selected variant
                 if (this.checked) {
-                    this.closest('.list-group-item').classList.add('active', 'bg-light');
+                    listItem.classList.add('active', 'bg-light');
+                }
+            });
+        });
+        
+        // Select the first variant by default when opening modal
+        const productModals = document.querySelectorAll('.modal');
+        productModals.forEach(modal => {
+            modal.addEventListener('shown.bs.modal', function() {
+                const firstInput = this.querySelector('.variant-selector');
+                if (firstInput) {
+                    firstInput.checked = true;
+                    const event = new Event('change', { bubbles: true });
+                    firstInput.dispatchEvent(event);
                 }
             });
         });
