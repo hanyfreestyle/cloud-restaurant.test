@@ -24,12 +24,12 @@
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Category section styling */
+/* Section Display */
 .category-section {
+    display: block !important; /* Always show all sections */
     scroll-margin-top: 150px;
     padding-top: 20px;
     padding-bottom: 30px;
-    display: block !important; /* Ensure sections are always visible */
 }
 
 /* Menu item card styling */
