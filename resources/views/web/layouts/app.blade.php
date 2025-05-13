@@ -19,8 +19,13 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
     
     <style>
+        /* Google Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
         :root {
             --primary-color: #e67e22;
             --secondary-color: #2c3e50;
@@ -31,12 +36,15 @@
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f8f9fa;
             color: #333;
         }
         
         /* RTL specific styles */
+        [dir="rtl"] body {
+            font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
         [dir="rtl"] .ms-auto {
             margin-right: auto !important;
             margin-left: 0 !important;
@@ -468,6 +476,7 @@
     
     <!-- Custom JS -->
     <script src="{{ asset('js/custom.js') }}"></script>
+    <script src="{{ asset('js/scripts.js') }}"></script>
     
     <!-- Fix modals z-index and backdrop issues -->
     <script>

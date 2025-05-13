@@ -22,13 +22,14 @@
                 </div>
             @endif
             
-            <!-- Categories menu -->
-            <div class="text-center mb-4">
+            <!-- Categories menu - now fixed at top for scrolling -->
+            <div class="category-menu sticky-top bg-white py-3 shadow-sm mb-4" style="top: 60px; z-index: 99;">
                 <div class="d-flex flex-wrap justify-content-center">
                     @foreach($categories as $category)
                         <button 
-                            wire:click="setCategory('{{ $category->id }}')" 
-                            class="btn btn-outline-primary mx-1 mb-2 {{ $activeCategory == $category->id ? 'active' : '' }}"
+                            type="button"
+                            class="btn btn-outline-primary mx-1 mb-2 {{ $loop->first ? 'active' : '' }}"
+                            onclick="scrollToCategory('category-{{ $category->id }}');"
                         >
                             {{ $category->name }}
                         </button>
@@ -36,71 +37,77 @@
                 </div>
             </div>
             
-            <!-- Products grid -->
-            <div class="row g-4">
-                @forelse($products as $product)
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card menu-item shadow-sm h-100">
-                            @if($product->getFirstMediaUrl('products'))
-                                <img 
-                                    src="{{ $product->getFirstMediaUrl('products') }}" 
-                                    class="card-img-top menu-item-image" 
-                                    alt="{{ $product->name }}"
-                                >
-                            @else
-                                <div class="bg-light menu-item-image d-flex align-items-center justify-content-center">
-                                    <i class="fas fa-utensils fa-3x text-muted"></i>
-                                </div>
-                            @endif
-                            
-                            @if($product->regular_price > $product->price)
-                                <div class="menu-item-badge">
-                                    {{ __('Sale') }}
-                                </div>
-                            @endif
-                            
-                            <div class="card-body d-flex flex-column">
-                                <h5 class="card-title">{{ $product->name }}</h5>
-                                <p class="card-text text-muted small">{{ \Illuminate\Support\Str::limit($product->description, 80) }}</p>
-                                
-                                <div class="mt-auto">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <span class="fw-bold text-primary">{{ number_format($product->price, 2) }} EGP</span>
-                                            @if($product->regular_price > $product->price)
-                                                <small class="text-muted text-decoration-line-through ms-2">
-                                                    {{ number_format($product->regular_price, 2) }} EGP
-                                                </small>
-                                            @endif
+            <!-- Categories with Products - All shown in the same page -->
+            @foreach($categoriesWithProducts as $category)
+                <div id="category-{{ $category->id }}" class="mb-5 category-section">
+                    <h2 class="mb-4 pb-2 border-bottom">{{ $category->name }}</h2>
+                    
+                    <div class="row g-4">
+                        @forelse($category->products as $product)
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card menu-item shadow-sm h-100">
+                                    @if($product->image)
+                                        <img 
+                                            src="{{ asset('storage/' . $product->image) }}" 
+                                            class="card-img-top menu-item-image" 
+                                            alt="{{ $product->name }}"
+                                            loading="lazy"
+                                        >
+                                    @else
+                                        <div class="bg-light menu-item-image d-flex align-items-center justify-content-center">
+                                            <i class="fas fa-utensils fa-3x text-muted"></i>
                                         </div>
+                                    @endif
+                                    
+                                    @if($product->regular_price > $product->price)
+                                        <div class="menu-item-badge">
+                                            {{ __('Sale') }}
+                                        </div>
+                                    @endif
+                                    
+                                    <div class="card-body d-flex flex-column">
+                                        <h5 class="card-title" title="{{ $product->name }}">{{ $product->name }}</h5>
+                                        <p class="card-text text-muted small">{{ \Illuminate\Support\Str::limit($product->description, 100) }}</p>
                                         
-                                        @if($product->productVariants->count() > 0)
-                                            <button 
-                                                wire:click="showProductVariants('{{ $product->id }}')"
-                                                class="btn btn-sm btn-primary"
-                                            >
-                                                <i class="fas fa-plus me-1"></i> {{ __('Add') }}
-                                            </button>
-                                        @else
-                                            <button 
-                                                wire:click="addToCart('{{ $product->id }}', true)"
-                                                class="btn btn-sm btn-primary"
-                                            >
-                                                <i class="fas fa-plus me-1"></i> {{ __('Add') }}
-                                            </button>
-                                        @endif
+                                        <div class="mt-auto">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <span class="fw-bold text-primary">{{ number_format($product->price, 2) }} EGP</span>
+                                                    @if($product->regular_price > $product->price)
+                                                        <small class="text-muted text-decoration-line-through ms-2">
+                                                            {{ number_format($product->regular_price, 2) }} EGP
+                                                        </small>
+                                                    @endif
+                                                </div>
+                                                
+                                                @if($product->productVariants->count() > 0)
+                                                    <button 
+                                                        wire:click="showProductVariants('{{ $product->id }}')"
+                                                        class="btn btn-sm btn-primary"
+                                                    >
+                                                        <i class="fas fa-cart-plus me-1"></i> {{ __('Add') }}
+                                                    </button>
+                                                @else
+                                                    <button 
+                                                        wire:click="addToCart('{{ $product->id }}', true)"
+                                                        class="btn btn-sm btn-primary"
+                                                    >
+                                                        <i class="fas fa-cart-plus me-1"></i> {{ __('Add') }}
+                                                    </button>
+                                                @endif
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        @empty
+                            <div class="col-12 text-center py-3">
+                                <p class="text-muted">{{ __('No products available in this category.') }}</p>
+                            </div>
+                        @endforelse
                     </div>
-                @empty
-                    <div class="col-12 text-center py-5">
-                        <i class="fas fa-utensils fa-3x mb-3 text-muted"></i>
-                        <p>{{ __('No products found in this category.') }}</p>
-                    </div>
-                @endforelse
-            </div>
+                </div>
+            @endforeach
         </div>
     </section>
     
@@ -115,9 +122,9 @@
                 </div>
                 <div class="modal-body">
                     <div class="mb-4">
-                        @if($selectedProduct->getFirstMediaUrl('products'))
+                        @if($selectedProduct->image)
                             <img 
-                                src="{{ $selectedProduct->getFirstMediaUrl('products') }}" 
+                                src="{{ asset('storage/' . $selectedProduct->image) }}" 
                                 class="img-fluid rounded w-100" 
                                 style="max-height: 200px; object-fit: cover;"
                                 alt="{{ $selectedProduct->name }}"
@@ -178,14 +185,55 @@
     </div>
     @endif
     
-    <!-- JavaScript for category navigation and product interactions -->
+    <!-- JavaScript for smooth scrolling to categories -->
     <script>
+        function scrollToCategory(categoryId) {
+            const element = document.getElementById(categoryId);
+            if (element) {
+                // Update active button
+                document.querySelectorAll('.btn-outline-primary').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                event.target.classList.add('active');
+                
+                // Scroll to category
+                const offset = 120; // Account for sticky header + category menu
+                const elementPosition = element.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - offset;
+                
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+            }
+        }
+        
+        // Monitor scroll to update active category button
+        document.addEventListener('DOMContentLoaded', function() {
+            window.addEventListener('scroll', function() {
+                const scrollPosition = window.scrollY + 150; // Add offset
+                
+                // Find the current visible section
+                document.querySelectorAll('.category-section').forEach((section, index) => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.offsetHeight;
+                    
+                    if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                        // Update active button
+                        document.querySelectorAll('.btn-outline-primary').forEach(btn => {
+                            btn.classList.remove('active');
+                        });
+                        
+                        document.querySelectorAll('.btn-outline-primary')[index].classList.add('active');
+                    }
+                });
+            });
+        });
+        
         document.addEventListener('livewire:load', function () {
             window.addEventListener('category-changed', event => {
-                const productsContainer = document.getElementById('products-container');
-                if (productsContainer) {
-                    // Smooth scroll to products
-                    productsContainer.scrollIntoView({ behavior: 'smooth' });
+                if (event.detail && event.detail.categoryId) {
+                    scrollToCategory('category-' + event.detail.categoryId);
                 }
             });
         });

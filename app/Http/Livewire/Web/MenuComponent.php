@@ -44,17 +44,16 @@ class MenuComponent extends Component
     
     public function loadProducts()
     {
-        if ($this->activeCategory) {
-            $this->products = Product::where('category_id', $this->activeCategory)
-                ->where('is_active', true)
-                ->get();
-        }
+        // Since we're showing all products, we don't need to filter by active category
+        // This method is kept for compatibility with existing code
     }
     
     public function setCategory($categoryId)
     {
         $this->activeCategory = $categoryId;
-        $this->loadProducts();
+        $this->dispatchBrowserEvent('category-changed', [
+            'categoryId' => $categoryId
+        ]);
     }
     
     public function showProductVariants($productId)
@@ -165,7 +164,17 @@ class MenuComponent extends Component
     
     public function render()
     {
-        return view('web.livewire.menu-component')
+        // For showing all products grouped by category
+        $categoriesWithProducts = $this->categories->map(function($category) {
+            $category->products = Product::where('category_id', $category->id)
+                ->where('is_active', true)
+                ->get();
+            return $category;
+        });
+        
+        return view('web.livewire.menu-component', [
+            'categoriesWithProducts' => $categoriesWithProducts
+        ])
             ->layout('web.layouts.app', ['title' => __('Menu')]);
     }
 }
