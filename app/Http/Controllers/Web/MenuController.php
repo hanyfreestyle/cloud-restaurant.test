@@ -18,7 +18,7 @@ class MenuController extends Controller
         $restaurant = Restaurant::where('is_active', true)->first();
         
         $categories = [];
-        $products = [];
+        $categoriesWithProducts = [];
         $activeCategory = null;
         
         if ($restaurant) {
@@ -35,15 +35,16 @@ class MenuController extends Controller
                 $activeCategory = $categories->first()->id;
             }
             
-            // Get products for active category
-            if ($activeCategory) {
-                $products = Product::where('category_id', $activeCategory)
+            // Get all products for all categories
+            $categoriesWithProducts = $categories->map(function($category) {
+                $category->products = Product::where('category_id', $category->id)
                     ->where('is_active', true)
                     ->get();
-            }
+                return $category;
+            });
         }
         
-        return view('web.menu.index', compact('restaurant', 'categories', 'products', 'activeCategory'));
+        return view('web.menu.index', compact('restaurant', 'categories', 'categoriesWithProducts', 'activeCategory'));
     }
     
     public function selectCategory(Request $request)

@@ -46,6 +46,8 @@
                         @forelse($category->products as $product)
                             <div class="col-md-6 col-lg-4">
                                 <div class="card menu-item shadow-sm h-100">
+    <!-- Ensure images are loaded properly from direct image field -->
+    <!-- Since getFirstMediaUrl is not used anymore, use the direct image field -->
                                     @if($product->image)
                                         <img 
                                             src="{{ asset('storage/' . $product->image) }}" 

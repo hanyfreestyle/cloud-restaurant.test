@@ -29,6 +29,7 @@
     scroll-margin-top: 150px;
     padding-top: 20px;
     padding-bottom: 30px;
+    display: block !important; /* Ensure sections are always visible */
 }
 
 /* Menu item card styling */
@@ -38,11 +39,26 @@
     overflow: hidden;
     border-radius: 10px;
     height: 100%;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.5s ease forwards;
+}
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.menu-item.show {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .menu-item:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
 .menu-item-image {
@@ -207,4 +223,36 @@
 [dir="rtl"] .ms-2 {
     margin-left: 0 !important;
     margin-right: 0.5rem !important;
+}
+
+/* Animation for adding to cart */
+@keyframes addToCartPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.btn-primary.clicked {
+    animation: addToCartPulse 0.4s ease;
+}
+
+/* Better card shadows */
+.card {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+/* Media queries for responsive design */
+@media (max-width: 768px) {
+    .category-menu {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        padding-bottom: 5px;
+    }
+    
+    .btn-outline-primary {
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
 }

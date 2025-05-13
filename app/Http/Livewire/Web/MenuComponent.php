@@ -14,7 +14,6 @@ class MenuComponent extends Component
     public $restaurant;
     public $categories = [];
     public $activeCategory = null;
-    public $products = [];
     
     // For product variant selection
     public $showVariantModal = false;
@@ -37,16 +36,13 @@ class MenuComponent extends Component
             // Set active category to the first one if available
             if ($this->categories->count() > 0) {
                 $this->activeCategory = $this->categories->first()->id;
-                $this->loadProducts();
+                // No need to call loadProducts as we show all products
             }
         }
     }
     
-    public function loadProducts()
-    {
-        // Since we're showing all products, we don't need to filter by active category
-        // This method is kept for compatibility with existing code
-    }
+    // Remove obsolete loadProducts method
+    // We load all products in render()
     
     public function setCategory($categoryId)
     {
@@ -75,7 +71,7 @@ class MenuComponent extends Component
                     $uniqueId = $product->id;
                     
                     // Make sure to get the image URL properly
-                    $imageUrl = $product->getFirstMediaUrl('products') ?? null;
+                    $imageUrl = $product->image ? asset('storage/' . $product->image) : null;
                     
                     Cart::add([
                         'id' => $uniqueId,
@@ -106,7 +102,7 @@ class MenuComponent extends Component
                         $uniqueId = $product->id . '-' . $variant->id;
                         
                         // Make sure to get the image URL properly
-                        $imageUrl = $product->getFirstMediaUrl('products') ?? null;
+                        $imageUrl = $product->image ? asset('storage/' . $product->image) : null;
                         
                         Cart::add([
                             'id' => $uniqueId, 
