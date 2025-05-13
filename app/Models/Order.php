@@ -20,8 +20,13 @@ class Order extends Model
         'restaurant_id',
         'table_id',
         'customer_name',
+        'email',
+        'phone',
+        'address',
+        'notes',
         'status',
         'payment_status',
+        'payment_method',
         'total_amount',
     ];
 

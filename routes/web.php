@@ -36,6 +36,7 @@ Route::group(
 
         // Checkout
         Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
+        Route::post('/checkout', [CheckoutController::class, 'processCheckout'])->name('checkout.process');
 
         // Order confirmation
         Route::get('/order/success', [OrderController::class, 'success'])->name('order.success');

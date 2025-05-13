@@ -10,9 +10,15 @@ class OrderController extends Controller
 {
     public function success()
     {
-        // This would typically check for a specific order ID in session
-        // and show details about the order that was just placed
+        if (!session()->has('order_id')) {
+            return redirect()->route('home');
+        }
         
-        return view('web.order.success');
+        $orderId = session('order_id');
+        
+        return view('web.order.success', [
+            'orderId' => $orderId,
+            'message' => session('message')
+        ]);
     }
 }

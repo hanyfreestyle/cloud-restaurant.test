@@ -394,14 +394,14 @@
         </div>
     </footer>
     
-<!-- Bootstrap Bundle with Popper -->
+    <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
     <!-- Custom JS -->
     <script src="{{ asset('js/custom.js') }}"></script>
     
+    <!-- Fix modals z-index and backdrop issues -->
     <script>
-        // Fix modals z-index and backdrop issues
         document.addEventListener('DOMContentLoaded', function() {
             // Ensure modals work correctly
             var modals = document.querySelectorAll('.modal');
